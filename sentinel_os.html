@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SENTINEL OS</title>
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;font:13px Tahoma,Verdana,sans-serif;color:#151515;user-select:none}
+input{user-select:text;font:inherit}
+.panel{background:#c9c9c4;box-shadow:inset -1px -1px #333,inset 1px 1px #fff,inset -2px -2px #888,inset 2px 2px #e6e6e2}
+button{font:inherit;padding:5px 14px;background:#c9c9c4;border:0;cursor:pointer;box-shadow:inset -1px -1px #333,inset 1px 1px #fff,inset -2px -2px #888,inset 2px 2px #e6e6e2}
+button:active{box-shadow:inset 1px 1px #333,inset -1px -1px #fff}
+button:focus-visible,input:focus-visible{outline:2px solid #1b3a6b;outline-offset:1px}
+input{padding:5px 6px;border:0;background:#fff;box-shadow:inset 1px 1px #555,inset -1px -1px #ddd;width:100%}
+#login{position:fixed;inset:0;background:linear-gradient(160deg,#0c2237,#17476b);display:flex;align-items:center;justify-content:center}
+#login .panel{width:360px;padding:22px}
+#login h1{margin:0 0 4px;font:700 26px "Trebuchet MS",sans-serif;letter-spacing:1px;color:#17476b}
+#login p{margin:0 0 14px;color:#444}
+label{display:block;margin:10px 0 3px;font-weight:700}
+.err{color:#9c1c14;margin-top:10px;min-height:34px}
+.okm{color:#1f6b2a}
+#desk{position:fixed;inset:0;background:#0e6e73;display:none}
+.ico{position:absolute;left:22px;width:92px;text-align:center;color:#fff;cursor:pointer;text-shadow:1px 1px 2px #000;padding:4px}
+.ico b{display:block;font-size:34px;font-weight:400}
+.ico.lock{opacity:.55}
+#bar{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;z-index:9000}
+#tm{font:700 15px "Courier New",monospace;padding:3px 10px;background:#fff;box-shadow:inset 1px 1px #555}
+#tm.low{color:#b3261e}
+.win{position:absolute;width:380px}
+.tb{display:flex;justify-content:space-between;align-items:center;padding:4px 6px;margin:3px;background:linear-gradient(90deg,#1b3a6b,#3c6aa8);color:#fff;font-weight:700;cursor:move;touch-action:none}
+.x{padding:0 7px;line-height:16px}
+.bd{padding:12px 14px 14px}
+.bd p{margin:0 0 10px;line-height:1.45}
+.row{display:flex;gap:8px}
+.row button{white-space:nowrap}
+.msg{padding:6px 8px;margin-bottom:6px;background:#fff;box-shadow:inset 1px 1px #555}
+.msg small{color:#666;display:block}
+#toast{position:absolute;right:14px;bottom:46px;width:300px;z-index:9500;display:none;padding:12px;background:#fffbe0}
+#gm{position:fixed;right:12px;top:12px;width:300px;z-index:99999;display:none;padding:12px;font-size:12px}
+#gm h3{margin:0 0 8px}
+#gm .row{margin:6px 0}
+#over{position:fixed;inset:0;z-index:99000;display:none;align-items:center;justify-content:center;background:rgba(10,20,30,.92);color:#fff;text-align:center;font:700 26px "Trebuchet MS",sans-serif;padding:30px}
+@media (prefers-reduced-motion:no-preference){.win{animation:op .12s ease-out}@keyframes op{from{transform:scale(.97);opacity:.4}}}
+</style></head><body>
+
+<div id="login"><div class="panel">
+  <h1>SENTINEL OS</h1>
+  <p>Poste opérateur — session verrouillée.</p>
+  <label for="u">Identifiant</label><input id="u" value="operateur-07" readonly>
+  <label for="p">Mot de passe</label><input id="p" type="password" autocomplete="off">
+  <div class="err" id="le"></div>
+  <button id="lb">Ouvrir la session</button>
+</div></div>
+
+<div id="desk">
+  <div id="toast" class="panel"></div>
+  <div id="bar" class="panel"><b>SENTINEL OS</b><span>Temps restant avant verrouillage : <span id="tm">--:--</span></span></div>
+</div>
+
+<div id="gm" class="panel">
+  <h3>Game master (F9 pour fermer)</h3>
+  <div class="row"><button id="g-p">Pause / Reprendre</button><button id="g-m">−1 min</button><button id="g-a">+1 min</button></div>
+  <div class="row"><input id="g-t" placeholder="Message / indice pour l'écran"><button id="g-s">Envoyer</button></div>
+  <div class="row"><button id="g-n">Valider l'étape suivante</button><button id="g-r">Réinitialiser</button></div>
+  <label for="g-h">Calculer un hash de réponse</label>
+  <div class="row"><input id="g-h" placeholder="ex. K7-ALPHA"><input id="g-o" readonly style="width:110px"></div>
+</div>
+<div id="over"></div>
+
+<script>
+/* ===== CONTENU À MODIFIER =====
+   Les réponses sont stockées sous forme de hash (voir l'outil dans le panneau F9).
+   Les réponses d'exemple : login = K7-ALPHA, registre = 4471, clé = PHARE */
+const DATA={
+  duree:50*60,
+  login:{h:"1fkfx9p"},
+  etapes:[
+    {ico:"📁",nom:"Registre du personnel",txt:"Retrouvez le <b>matricule</b> de l'employé <b>L. Martin</b> (service maintenance).",ph:"Matricule",h:"yhrxb7"},
+    {ico:"🔐",nom:"Clé de chiffrement",txt:"Saisissez le mot de passe du coffre. Il est inscrit sur un objet du hall, il n'est pas dans cet ordinateur.",ph:"Mot de passe",h:"33wc5n"}
+  ],
+  fin:"Accès accordé. Les portes sont déverrouillées."
+};
+
+/* ===== OUTILS ===== */
+const $=id=>document.getElementById(id);
+const H=s=>{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');let h=5381;for(const c of s)h=((h*33)^c.charCodeAt(0))>>>0;return h.toString(36)};
+let S={login:false,done:0,t:DATA.duree,paused:false,msgs:[]};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('sentinel')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('sentinel',JSON.stringify(S))}catch(e){}};
+let ac;
+function tone(f,d=.15,ty='square',v=.06,at=0){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+at;o.type=ty;o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
+const sOk=()=>{tone(660,.12,'sine',.1);tone(880,.22,'sine',.1,.12)};
+const sBad=()=>tone(160,.4,'sawtooth',.07);
+const sPing=()=>{tone(1000,.1,'sine',.1);tone(1400,.15,'sine',.1,.12)};
+document.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* ===== FENÊTRES ===== */
+let z=10;
+function openWin(id,titre,html){
+  let w=$('w-'+id);if(w){w.style.zIndex=++z;return w}
+  w=document.createElement('div');w.id='w-'+id;w.className='win panel';
+  w.style.cssText=`left:${150+Math.random()*140}px;top:${30+Math.random()*90}px;z-index:${++z}`;
+  w.innerHTML=`<div class="tb"><span>${titre}</span><button class="x" aria-label="Fermer">✕</button></div><div class="bd">${html}</div>`;
+  $('desk').appendChild(w);
+  const t=w.querySelector('.tb');
+  w.querySelector('.x').onclick=()=>w.remove();
+  w.onpointerdown=()=>w.style.zIndex=++z;
+  t.onpointerdown=e=>{if(e.target.closest('button'))return;const dx=e.clientX-w.offsetLeft,dy=e.clientY-w.offsetTop;t.setPointerCapture(e.pointerId);
+    t.onpointermove=m=>{w.style.left=Math.max(0,m.clientX-dx)+'px';w.style.top=Math.max(0,m.clientY-dy)+'px'};t.onpointerup=()=>t.onpointermove=null};
+  return w;
+}
+function toast(x){const t=$('toast');t.innerHTML='<b>Nouveau message</b><br>'+x;t.style.display='block';clearTimeout(toast.k);toast.k=setTimeout(()=>t.style.display='none',7000)}
+
+/* ===== BUREAU ===== */
+function icons(){
+  document.querySelectorAll('.ico').forEach(n=>n.remove());
+  const list=[...DATA.etapes.map((e,i)=>({ico:e.ico,nom:e.nom,lock:i>S.done,done:i<S.done,go:()=>openStep(i)})),{ico:"✉️",nom:"Messagerie",go:openMsgs}];
+  list.forEach((it,k)=>{const d=document.createElement('div');d.className='ico'+(it.lock?' lock':'');d.style.top=(18+k*104)+'px';
+    d.innerHTML=`<b>${it.lock?'🔒':it.ico}</b>${it.nom}${it.done?' ✔':''}`;d.onclick=it.go;$('desk').appendChild(d)});
+}
+function openStep(i){
+  const e=DATA.etapes[i];
+  if(i>S.done){sBad();openWin('lock','Accès refusé',`<p>Ce dossier est verrouillé. Validez d'abord « ${DATA.etapes[S.done].nom} ».</p>`);return}
+  const w=openWin('s'+i,e.nom,`<p>${e.txt}</p><div class="row"><input id="in${i}" placeholder="${e.ph}" autocomplete="off"><button id="bt${i}">Valider</button></div><div class="err" id="fb${i}"></div>`);
+  const go=()=>{const f=$('fb'+i);
+    if(H($('in'+i).value)===e.h){sOk();S.done=Math.max(S.done,i+1);save();f.className='err okm';f.textContent='Validé.';icons();if(S.done>=DATA.etapes.length)finish()}
+    else{sBad();f.className='err';f.textContent="Réponse refusée. Redemandez l'information à l'équipe sur le terrain et vérifiez chaque caractère."}};
+  w.querySelector('#bt'+i).onclick=go;w.querySelector('#in'+i).onkeydown=ev=>{if(ev.key==='Enter')go()};
+  if(i<S.done){const f=w.querySelector('.err');f.className='err okm';f.textContent='Déjà validé.'}
+}
+function openMsgs(){
+  const body=()=>S.msgs.length?S.msgs.slice().reverse().map(m=>`<div class="msg"><small>${m.t}</small>${m.x}</div>`).join(''):'<p>Aucun message.</p>';
+  const w=openWin('msgs','Messagerie','');w.querySelector('.bd').innerHTML=body();
+}
+function finish(){setTimeout(()=>{sOk();over(DATA.fin);S.paused=true;save()},700)}
+function over(x){const o=$('over');o.textContent=x;o.style.display='flex'}
+
+/* ===== SESSION ET TIMER ===== */
+function showDesk(){$('login').style.display='none';$('desk').style.display='block';icons();clock()}
+function tryLogin(){
+  if(H($('p').value)===DATA.login.h){sOk();S.login=true;save();showDesk()}
+  else{sBad();$('le').textContent="Mot de passe incorrect. Le code d'accès figure sur le badge de service : demandez-le à l'équipe sur le terrain."}
+}
+$('lb').onclick=tryLogin;$('p').onkeydown=e=>{if(e.key==='Enter')tryLogin()};
+function clock(){const t=Math.max(0,S.t),m=String(Math.floor(t/60)).padStart(2,'0'),s=String(t%60).padStart(2,'0');
+  const el=$('tm');el.textContent=`${m}:${s}`;el.className=t<300?'low':''}
+setInterval(()=>{if(!S.login||S.paused)return;if(S.t>0){S.t--;save();clock();if(S.t===0){sBad();over("Temps écoulé. Le système se verrouille.")}}},1000);
+
+/* ===== PANNEAU GAME MASTER (F9) ===== */
+document.addEventListener('keydown',e=>{if(e.key==='F9'){e.preventDefault();const g=$('gm');g.style.display=g.style.display==='block'?'none':'block'}});
+$('g-p').onclick=()=>{S.paused=!S.paused;save()};
+$('g-m').onclick=()=>{S.t=Math.max(0,S.t-60);save();clock()};
+$('g-a').onclick=()=>{S.t+=60;save();clock();$('over').style.display='none'};
+$('g-s').onclick=()=>{const v=$('g-t').value.trim();if(!v)return;S.msgs.push({t:new Date().toLocaleTimeString('fr-FR'),x:v.replace(/</g,'&lt;')});save();sPing();toast(v.replace(/</g,'&lt;'));$('g-t').value='';if($('w-msgs'))openMsgs().querySelector('.bd').innerHTML=S.msgs.slice().reverse().map(m=>`<div class="msg"><small>${m.t}</small>${m.x}</div>`).join('')};
+$('g-n').onclick=()=>{if(S.done<DATA.etapes.length){S.done++;save();icons();if(S.done>=DATA.etapes.length)finish()}};
+$('g-r').onclick=()=>{if(confirm('Tout réinitialiser ?')){localStorage.removeItem('sentinel');location.reload()}};
+$('g-h').oninput=e=>$('g-o').value=H(e.target.value);
+
+if(S.login)showDesk();
+</script></body></html>
