@@ -34,9 +34,6 @@ label{display:block;margin:10px 0 3px;font-weight:700}
 .msg{padding:6px 8px;margin-bottom:6px;background:#fff;box-shadow:inset 1px 1px #555}
 .msg small{color:#666;display:block}
 #toast{position:absolute;right:14px;bottom:46px;width:300px;z-index:9500;display:none;padding:12px;background:#fffbe0}
-#gm{position:fixed;right:12px;top:12px;width:300px;z-index:99999;display:none;padding:12px;font-size:12px}
-#gm h3{margin:0 0 8px}
-#gm .row{margin:6px 0}
 #over{position:fixed;inset:0;z-index:99000;display:none;align-items:center;justify-content:center;background:rgba(10,20,30,.92);color:#fff;text-align:center;font:700 26px "Trebuchet MS",sans-serif;padding:30px}
 @media (prefers-reduced-motion:no-preference){.win{animation:op .12s ease-out}@keyframes op{from{transform:scale(.97);opacity:.4}}}
 </style></head><body>
@@ -55,28 +52,23 @@ label{display:block;margin:10px 0 3px;font-weight:700}
   <div id="bar" class="panel"><b>SENTINEL OS</b><span>Temps restant avant verrouillage : <span id="tm">--:--</span></span></div>
 </div>
 
-<div id="gm" class="panel">
-  <h3>Game master (F9 pour fermer)</h3>
-  <div class="row"><button id="g-p">Pause / Reprendre</button><button id="g-m">−1 min</button><button id="g-a">+1 min</button></div>
-  <div class="row"><input id="g-t" placeholder="Message / indice pour l'écran"><button id="g-s">Envoyer</button></div>
-  <div class="row"><button id="g-n">Valider l'étape suivante</button><button id="g-r">Réinitialiser</button></div>
-  <label for="g-h">Calculer un hash de réponse</label>
-  <div class="row"><input id="g-h" placeholder="ex. K7-ALPHA"><input id="g-o" readonly style="width:110px"></div>
-</div>
 <div id="over"></div>
 
 <script>
 /* ===== CONTENU À MODIFIER =====
-   Les réponses sont stockées sous forme de hash (voir l'outil dans le panneau F9).
-   Les réponses d'exemple : login = K7-ALPHA, registre = 4471, clé = PHARE */
+   Réponses stockées en hash. En console (F12) : H("réponse") donne le hash, reset() remet la partie à zéro.
+   Réponses actuelles : K7-ALPHA, 4471, VNEK, PHARE, 1409, AURORE */
 const DATA={
   duree:50*60,
-  login:{h:"1fkfx9p"},
+  login:{h:"1fkfx9p",msg:"Session ouverte. Protocole QUARANTAINE actif : le centre se verrouille définitivement dans 50 minutes. Le réseau est coupé, les données ne sont plus que sur papier dans les archives."},
   etapes:[
-    {ico:"📁",nom:"Registre du personnel",txt:"Retrouvez le <b>matricule</b> de l'employé <b>L. Martin</b> (service maintenance).",ph:"Matricule",h:"yhrxb7"},
-    {ico:"🔐",nom:"Clé de chiffrement",txt:"Saisissez le mot de passe du coffre. Il est inscrit sur un objet du hall, il n'est pas dans cet ordinateur.",ph:"Mot de passe",h:"33wc5n"}
+    {ico:"\ud83d\udcc1",nom:"Registre du personnel",txt:"Retrouvez le <b>matricule</b> de l'employé <b>L. Martin</b> (service maintenance). Son badge a été utilisé cette nuit.",ph:"Matricule",h:"yhrxb7",de:"Syst\u00e8me",msg:"Matricule confirmé. Le badge de L. Martin a ouvert la salle serveurs à 03:05, alors que son titulaire était absent.",extra:""},
+    {ico:"\ud83d\udd23",nom:"Panneau d'identification",txt:"Le panneau demande 4 symboles, dans cet ordre. Chaque symbole correspond à une <b>lettre</b>. Décrivez-les à l'équipe sur le terrain : ils ont la table de correspondance.",ph:"4 lettres",h:"yj8po3",de:"Dr Vasseur",msg:"Archive B déverrouillée. Ne faites confiance à aucune alerte automatique. Cherchez le coffre.",extra:"<div class=\"row\" style=\"justify-content:space-around;margin:4px 0 12px\"><svg width=\"56\" height=\"56\" viewBox=\"0 0 64 64\" fill=\"none\" stroke=\"#111\" stroke-width=\"4\" stroke-linecap=\"round\"><circle cx=\"32\" cy=\"32\" r=\"24\"/><circle cx=\"32\" cy=\"32\" r=\"4\" fill=\"#111\"/></svg><svg width=\"56\" height=\"56\" viewBox=\"0 0 64 64\" fill=\"none\" stroke=\"#111\" stroke-width=\"4\" stroke-linecap=\"round\"><path d=\"M32 8 56 54H8Z\"/></svg><svg width=\"56\" height=\"56\" viewBox=\"0 0 64 64\" fill=\"none\" stroke=\"#111\" stroke-width=\"4\" stroke-linecap=\"round\"><path d=\"M32 8v48M8 32h48\"/><circle cx=\"32\" cy=\"32\" r=\"10\"/></svg><svg width=\"56\" height=\"56\" viewBox=\"0 0 64 64\" fill=\"none\" stroke=\"#111\" stroke-width=\"4\" stroke-linecap=\"round\"><path d=\"M6 36q13-24 26 0t26 0\"/></svg></div>"},
+    {ico:"\ud83d\udd10",nom:"Coffre des archives",txt:"Saisissez le mot de passe du coffre. Il est inscrit sur un objet du hall, il n'est pas dans cet ordinateur.",ph:"Mot de passe",h:"33wc5n",de:"Dr Vasseur",msg:"Coffre ouvert. Vous avez trouvé mon journal. Oui, c'est moi qui ai déclenché la quarantaine.",extra:""},
+    {ico:"\ud83d\udeaa",nom:"Sas interm\u00e9diaire",txt:"Le sas s'ouvre avec 4 chiffres : le <b>numéro écrit sur la porte de l'archive</b> (à demander à l'équipe), suivi du <b>mois de naissance</b> du Dr Vasseur.<br><br><i>Fiche : Dr Vasseur, chef de projet, né le 22/09/1968.</i>",ph:"4 chiffres",h:"yhvjmx",de:"Dr Vasseur",msg:"Sas ouvert. Je ne vous ai pas enfermés. J'ai enfermé AURORE. Il ne reste qu'un verrou.",extra:""},
+    {ico:"⚠️",nom:"Verrou de quarantaine",txt:"Pour lever la quarantaine, entrez le <b>nom de code du projet</b>. Le verrou ne reste armé que 20 secondes : l'équipe doit avoir le code <b>avant</b> que vous l'armiez.",ph:"Nom de code",h:"lulgor",arm:20,de:"Système",msg:"Quarantaine levée. Projet AURORE arrêté."}
   ],
-  fin:"Accès accordé. Les portes sont déverrouillées."
+  fin:"Quarantaine levée. Les portes sont déverrouillées."
 };
 
 /* ===== OUTILS ===== */
@@ -113,30 +105,35 @@ function toast(x){const t=$('toast');t.innerHTML='<b>Nouveau message</b><br>'+x;
 function icons(){
   document.querySelectorAll('.ico').forEach(n=>n.remove());
   const list=[...DATA.etapes.map((e,i)=>({ico:e.ico,nom:e.nom,lock:i>S.done,done:i<S.done,go:()=>openStep(i)})),{ico:"✉️",nom:"Messagerie",go:openMsgs}];
-  list.forEach((it,k)=>{const d=document.createElement('div');d.className='ico'+(it.lock?' lock':'');d.style.top=(18+k*104)+'px';
+  list.forEach((it,k)=>{const d=document.createElement('div');d.className='ico'+(it.lock?' lock':'');d.style.top=(18+k*88)+'px';
     d.innerHTML=`<b>${it.lock?'🔒':it.ico}</b>${it.nom}${it.done?' ✔':''}`;d.onclick=it.go;$('desk').appendChild(d)});
 }
+function msg(de,x){S.msgs.push({de,x,t:new Date().toLocaleTimeString('fr-FR')});save();sPing();toast(`<i>${de}</i> : ${x}`)}
 function openStep(i){
   const e=DATA.etapes[i];
   if(i>S.done){sBad();openWin('lock','Accès refusé',`<p>Ce dossier est verrouillé. Validez d'abord « ${DATA.etapes[S.done].nom} ».</p>`);return}
-  const w=openWin('s'+i,e.nom,`<p>${e.txt}</p><div class="row"><input id="in${i}" placeholder="${e.ph}" autocomplete="off"><button id="bt${i}">Valider</button></div><div class="err" id="fb${i}"></div>`);
-  const go=()=>{const f=$('fb'+i);
-    if(H($('in'+i).value)===e.h){sOk();S.done=Math.max(S.done,i+1);save();f.className='err okm';f.textContent='Validé.';icons();if(S.done>=DATA.etapes.length)finish()}
+  const w=openWin('s'+i,e.nom,`<p>${e.txt}</p>${e.extra||''}${e.arm?`<div class="row" style="margin-bottom:8px"><button id="ar${i}">Armer le verrou (${e.arm} s)</button></div>`:''}<div class="row"><input id="in${i}" placeholder="${e.ph}" autocomplete="off"${e.arm?' disabled':''}><button id="bt${i}">Valider</button></div><div class="err" id="fb${i}"></div>`);
+  const f=w.querySelector('#fb'+i),inp=w.querySelector('#in'+i);
+  const go=()=>{
+    if(inp.disabled){sBad();f.className='err';f.textContent="Verrou non armé. Armez-le, puis saisissez le code avant la fin du compte à rebours.";return}
+    if(H(inp.value)===e.h){clearInterval(w.k);sOk();S.done=Math.max(S.done,i+1);save();f.className='err okm';f.textContent='Validé.';icons();msg(e.de,e.msg);if(S.done>=DATA.etapes.length)finish()}
     else{sBad();f.className='err';f.textContent="Réponse refusée. Redemandez l'information à l'équipe sur le terrain et vérifiez chaque caractère."}};
-  w.querySelector('#bt'+i).onclick=go;w.querySelector('#in'+i).onkeydown=ev=>{if(ev.key==='Enter')go()};
-  if(i<S.done){const f=w.querySelector('.err');f.className='err okm';f.textContent='Déjà validé.'}
+  w.querySelector('#bt'+i).onclick=go;inp.onkeydown=ev=>{if(ev.key==='Enter')go()};
+  if(e.arm)w.querySelector('#ar'+i).onclick=()=>{let n=e.arm;inp.disabled=false;inp.focus();f.className='err';f.textContent=`Verrou armé : ${n} s`;clearInterval(w.k);
+    w.k=setInterval(()=>{n--;f.textContent=`Verrou armé : ${n} s`;if(n<=0){clearInterval(w.k);inp.disabled=true;sBad();f.textContent="Verrou désarmé : temps écoulé. Réarmez quand l'équipe est prête."}},1000)};
+  if(i<S.done){f.className='err okm';f.textContent='Déjà validé.'}
 }
 function openMsgs(){
-  const body=()=>S.msgs.length?S.msgs.slice().reverse().map(m=>`<div class="msg"><small>${m.t}</small>${m.x}</div>`).join(''):'<p>Aucun message.</p>';
-  const w=openWin('msgs','Messagerie','');w.querySelector('.bd').innerHTML=body();
+  const w=openWin('msgs','Messagerie','');
+  w.querySelector('.bd').innerHTML=S.msgs.length?S.msgs.slice().reverse().map(m=>`<div class="msg"><small>${m.t} · ${m.de}</small>${m.x}</div>`).join(''):'<p>Aucun message.</p>';
 }
-function finish(){setTimeout(()=>{sOk();over(DATA.fin);S.paused=true;save()},700)}
+function finish(){setTimeout(()=>{sOk();over(DATA.fin);S.paused=true;save()},900)}
 function over(x){const o=$('over');o.textContent=x;o.style.display='flex'}
 
 /* ===== SESSION ET TIMER ===== */
 function showDesk(){$('login').style.display='none';$('desk').style.display='block';icons();clock()}
 function tryLogin(){
-  if(H($('p').value)===DATA.login.h){sOk();S.login=true;save();showDesk()}
+  if(H($('p').value)===DATA.login.h){sOk();S.login=true;save();showDesk();msg('Système',DATA.login.msg)}
   else{sBad();$('le').textContent="Mot de passe incorrect. Le code d'accès figure sur le badge de service : demandez-le à l'équipe sur le terrain."}
 }
 $('lb').onclick=tryLogin;$('p').onkeydown=e=>{if(e.key==='Enter')tryLogin()};
@@ -144,15 +141,6 @@ function clock(){const t=Math.max(0,S.t),m=String(Math.floor(t/60)).padStart(2,'
   const el=$('tm');el.textContent=`${m}:${s}`;el.className=t<300?'low':''}
 setInterval(()=>{if(!S.login||S.paused)return;if(S.t>0){S.t--;save();clock();if(S.t===0){sBad();over("Temps écoulé. Le système se verrouille.")}}},1000);
 
-/* ===== PANNEAU GAME MASTER (F9) ===== */
-document.addEventListener('keydown',e=>{if(e.key==='F9'){e.preventDefault();const g=$('gm');g.style.display=g.style.display==='block'?'none':'block'}});
-$('g-p').onclick=()=>{S.paused=!S.paused;save()};
-$('g-m').onclick=()=>{S.t=Math.max(0,S.t-60);save();clock()};
-$('g-a').onclick=()=>{S.t+=60;save();clock();$('over').style.display='none'};
-$('g-s').onclick=()=>{const v=$('g-t').value.trim();if(!v)return;S.msgs.push({t:new Date().toLocaleTimeString('fr-FR'),x:v.replace(/</g,'&lt;')});save();sPing();toast(v.replace(/</g,'&lt;'));$('g-t').value='';if($('w-msgs'))openMsgs().querySelector('.bd').innerHTML=S.msgs.slice().reverse().map(m=>`<div class="msg"><small>${m.t}</small>${m.x}</div>`).join('')};
-$('g-n').onclick=()=>{if(S.done<DATA.etapes.length){S.done++;save();icons();if(S.done>=DATA.etapes.length)finish()}};
-$('g-r').onclick=()=>{if(confirm('Tout réinitialiser ?')){localStorage.removeItem('sentinel');location.reload()}};
-$('g-h').oninput=e=>$('g-o').value=H(e.target.value);
-
+window.reset=()=>{localStorage.removeItem('sentinel');location.reload()};
 if(S.login)showDesk();
 </script></body></html>
