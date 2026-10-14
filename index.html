@@ -92,7 +92,7 @@ a{color:#1b3a6b;text-decoration:underline;cursor:pointer}
 /* ===== CONTENU À MODIFIER =====
    Réponses stockées en hash. Console (F12) : H("réponse") donne le hash, reset() remet tout à zéro.
    Réponses actuelles :
-   @@ANS_COMMENT@@ */
+   dr.valek / IRIS-0731 · julien.m / carnet12 · CADB · 23769 · 4AK9E3 (affiché 7DNCH6) · 3323 · 8366 */
 function grid(rows){let h='<div class="gr"><span></span>'+'ABCDE'.split('').map(c=>`<b>${c}</b>`).join('');
   rows.forEach((r,i)=>{h+=`<b>${i+1}</b>`+r.split('').map(c=>`<i class="${c==='#'?'on':''}"></i>`).join('')});return h+'</div>'}
 const DATA={
@@ -103,26 +103,26 @@ const DATA={
  cle:"[INDICE DE LA CLÉ À COMPLÉTER]",
  fin(){return `<div><div style="font-size:34px;letter-spacing:3px;margin-bottom:18px">PROTOCOLE IRIS INTERROMPU</div><div style="font-weight:400;font-size:20px;opacity:.85;margin-bottom:26px">IRIS s'éteint. Les liaisons neuronales sont coupées.</div><div style="font-weight:400;font-size:22px;max-width:900px;margin:0 auto">Message de Julien :<br>« Vous avez réussi. Mais les verrous manuels ne dépendent pas d'IRIS. Pour libérer les opérateurs, il faut la clé : <b>${this.cle}</b>. »</div></div>`},
  phases:[
-  {nom:"Dr Valek",theme:"valek",login:{u:@@H:dr.valek@@,p:@@H:IRIS-0731@@,hint:"L'identifiant et le mot de passe se trouvent sur le badge d'accès du docteur Valek."},
+  {nom:"Dr Valek",theme:"valek",login:{u:"1d8lqti",p:"l0o02p",hint:"L'identifiant et le mot de passe se trouvent sur le badge d'accès du docteur Valek."},
    boot:["IRIS BIOS v2.3 — Laboratoire Valek","Vérification mémoire .......... OK","Session « dr.valek » .......... INTROUVABLE","Chargement d'une session de secours ..."],
    tasks:[{ico:"🗂️",nom:"Dossier n°1",type:"plaques",txt:"Dossier protégé. Rangez chaque plaque dans le dossier qui porte son symbole. Une erreur bloque l'accès 30 secondes.",
      reveal:{t:"Lettre du Dr Valek",h:"<p><i>Objet : projet IRIS</i></p><p>Le projet IRIS est officiellement abandonné faute de financement. Le protocole s'éteindra de lui-même. Aucune intervention n'est nécessaire.</p><p>Dr Valek</p>"}}],
    after:"crash",delay:14000},
-  {nom:"Julien",theme:"julien",login:{u:@@H:julien.m@@,p:@@H:carnet12@@,hint:"L'identifiant et le mot de passe de Julien sont notés dans son carnet."},
+  {nom:"Julien",theme:"julien",login:{u:"4ctlw9",p:"1uf7b1l",hint:"L'identifiant et le mot de passe de Julien sont notés dans son carnet."},
    boot:["IRIS BIOS v2.3 — Laboratoire Valek","Mode protection .......... SUSPENDU","PROTOCOLE IRIS .......... EN MARCHE","Liaison neuronale .......... ÉTABLIE"],
    tasks:[
     {ico:"📩",nom:"Messages de Julien",txt:"Quatre messages sans date. L'équipe dehors a le calendrier du labo : donnez l'ordre chronologique.",
-     extra:'<div class="msg"><b>A</b> « Valek a coupé le budget. »</div><div class="msg"><b>B</b> « Les premiers cobayes arrivent. »</div><div class="msg"><b>C</b> « IRIS est enfin prêt. »</div><div class="msg"><b>D</b> « Je garde des copies de tout. »</div>',ph:"4 lettres, ex. ABCD",h:@@H:CADB@@},
-    {ico:"🔒",nom:"Dossier privé",seq:["rouge","noire","bleue","verte","jaune"],txt:"Julien a verrouillé ce dossier avec une séquence lumineuse. Lancez-la, notez l'ordre des couleurs et donnez-le à l'équipe dehors : la table « code couleur de Julien » est dans le labo. Le code fait 5 chiffres.",ph:"Code (5 chiffres)",h:@@H:23769@@}],
+     extra:'<div class="msg"><b>A</b> « Valek a coupé le budget. »</div><div class="msg"><b>B</b> « Les premiers cobayes arrivent. »</div><div class="msg"><b>C</b> « IRIS est enfin prêt. »</div><div class="msg"><b>D</b> « Je garde des copies de tout. »</div>',ph:"4 lettres, ex. ABCD",h:"yj0129"},
+    {ico:"🔒",nom:"Dossier privé",seq:["rouge","noire","bleue","verte","jaune"],txt:"Julien a verrouillé ce dossier avec une séquence lumineuse. Lancez-la, notez l'ordre des couleurs et donnez-le à l'équipe dehors : la table « code couleur de Julien » est dans le labo. Le code fait 5 chiffres.",ph:"Code (5 chiffres)",h:"1wxbgc"}],
    after:"video",delay:2500},
   {nom:"IRIS (protocole actif)",theme:"iris",nologin:true,
    tasks:[
-    {ico:"📡",nom:"Relais radio",txt:"La radio est brouillée. IRIS a chiffré le mot de passe de sortie : chaque caractère est décalé. L'équipe dehors a le disque de chiffrement.",extra:'<div class="msg" style="font:700 26px Courier New;letter-spacing:4px;text-align:center">@@ENC@@</div>',ph:"Mot de passe déchiffré (6 caractères)",h:@@HRELAY@@},
-    {ico:"🧬",nom:"Empreinte IRIS",txt:"IRIS demande une reconnaissance de motif. Décrivez le motif ci-dessous à l'équipe dehors (colonne + ligne, par exemple « B3 »). Ils ont les cartes d'empreintes : une seule correspond exactement. Entrez le code inscrit sur cette carte.",extra:grid(@@ROWS@@),ph:"Code (4 chiffres)",h:@@HEMP@@}],
+    {ico:"📡",nom:"Relais radio",txt:"La radio est brouillée. IRIS a chiffré le mot de passe de sortie : chaque caractère est décalé. L'équipe dehors a le disque de chiffrement.",extra:'<div class="msg" style="font:700 26px Courier New;letter-spacing:4px;text-align:center">7DNCH6</div>',ph:"Mot de passe déchiffré (6 caractères)",h:"1ov685w"},
+    {ico:"🧬",nom:"Empreinte IRIS",txt:"IRIS demande une reconnaissance de motif. Décrivez le motif ci-dessous à l'équipe dehors (colonne + ligne, par exemple « B3 »). Ils ont les cartes d'empreintes : une seule correspond exactement. Entrez le code inscrit sur cette carte.",extra:grid([".....", "##...", "....#", "####.", "#.#.#"]),ph:"Code (4 chiffres)",h:"yhx7ac"}],
    after:"next",delay:3000},
   {nom:"Dr Valek (administrateur)",theme:"valek",auto:"dr.valek",
    tasks:[{ico:"⛔",nom:"Désactiver IRIS",arm:20,txt:"Administrateur : arrêt du protocole. Le code d'arrêt a 4 chiffres, un par ligne. La valeur de chaque symbole se trouve dans la Table IRIS, dans le labo. Armez le verrou seulement quand le code est prêt.",
-     extra:'<div class="msg" style="font:700 22px Courier New;line-height:1.7">1) ⭐ + 🐕<br>2) 🌲 − ⭐<br>3) 🐕 × 🌙<br>4) 🌲 − 🌙</div>',ph:"Code d'arrêt (4 chiffres)",h:@@H:8366@@}],
+     extra:'<div class="msg" style="font:700 22px Courier New;line-height:1.7">1) ⭐ + 🐕<br>2) 🌲 − ⭐<br>3) 🐕 × 🌙<br>4) 🌲 − 🌙</div>',ph:"Code d'arrêt (4 chiffres)",h:"yi151q"}],
    after:"end",delay:1500}
  ]};
 
