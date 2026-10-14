@@ -75,7 +75,32 @@ a{color:#1b3a6b;text-decoration:underline;cursor:pointer}
 #fatal small{display:block;margin-top:10px;font-size:16px;font-weight:400;color:#fbb}
 .off{position:absolute;left:0;right:0;top:50%;background:#cde;height:100%;transform:translateY(-50%);animation:off .7s ease-in forwards}
 @keyframes off{0%{height:100%;opacity:.85}55%{height:3px;opacity:1}85%{height:3px;left:45%;right:45%}100%{height:2px;left:50%;right:50%;opacity:0}}
-#bt{position:absolute;left:24px;top:24px;margin:0;font:16px/1.7 "Courier New",monospace;color:#ccc;white-space:pre}
+#bpre{position:absolute;left:24px;top:24px;margin:0;font:16px/1.7 "Courier New",monospace;color:#ccc;white-space:pre}
+/* deuxième plantage : prise de contrôle d'IRIS */
+#desk.gl2{animation:gl2 .9s steps(1) infinite}
+@keyframes gl2{0%{transform:scale(1);filter:none}15%{transform:scale(1.05) rotate(-.6deg);filter:invert(1) hue-rotate(180deg)}30%{transform:scale(.97);filter:contrast(2) saturate(4)}45%{transform:scale(1.08) rotate(.8deg);filter:grayscale(1) brightness(1.6)}60%{transform:translate(0,12px);filter:drop-shadow(0 0 14px #f00) hue-rotate(300deg)}75%{transform:scale(1.03) skewY(2deg);filter:invert(1)}100%{transform:scale(1);filter:none}}
+#crash.red{background:rgba(30,0,0,.94)}
+#crash.red::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.35) 0 1px,transparent 1px 3px);pointer-events:none}
+#cl2{position:absolute;left:0;top:0;bottom:0;width:62%;padding:20px 26px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;font:15px/1.6 "Courier New",monospace;color:#f66;text-shadow:0 0 6px #f00;white-space:pre}
+#cl2 .k{color:#fff;font-weight:700}
+#eye{position:absolute;right:12%;top:50%;width:260px;height:260px;margin-top:-130px;border-radius:50%;background:radial-gradient(circle,#000 0 16%,#e22 17% 30%,#600 31% 60%,transparent 62%);box-shadow:0 0 80px #f00;opacity:0;transition:opacity 1.5s;animation:eye 1.2s ease-in-out infinite}
+@keyframes eye{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
+#big{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#f22;font:700 54px/1.3 "Courier New",monospace;letter-spacing:6px;text-shadow:0 0 30px #f00;animation:bg .35s steps(1) infinite}
+@keyframes bg{0%,100%{opacity:1}50%{opacity:.55}}
+/* mode stress : protocole IRIS actif */
+#vig{position:fixed;inset:0;pointer-events:none;z-index:9600;display:none;border:7px solid #c40000;box-shadow:inset 0 0 130px rgba(255,0,0,.55)}
+body.stress #vig{display:block;animation:vp 1.1s ease-in-out infinite}
+body.stress2 #vig{border-width:11px;animation-duration:.6s}
+@keyframes vp{0%,100%{opacity:1}50%{opacity:.35}}
+#warn{position:absolute;left:0;right:0;top:38px;height:24px;display:none;align-items:center;justify-content:center;background:#a00;color:#fff;font:700 13px "Courier New",monospace;letter-spacing:3px;z-index:9100;animation:wb 1s steps(1) infinite}
+body.stress #warn{display:flex}
+@keyframes wb{0%,100%{background:#a00}50%{background:#400}}
+body.stress #tm{color:#c00;animation:tb .5s steps(1) infinite}
+@keyframes tb{50%{background:#fcc}}
+#an{display:none;align-items:center;gap:8px;font:700 12px "Courier New",monospace;color:#900}
+body.stress #an{display:flex}
+.pb{display:inline-block;width:170px;height:12px;background:#fff;box-shadow:inset 1px 1px #555}.pb i{display:block;height:100%;width:0;background:#c00;transition:width .8s}
+#toast{position:absolute;right:14px;bottom:50px;width:330px;z-index:9500;display:none;padding:10px 12px;background:#fff0f0;border:2px solid #c00;color:#900;font-weight:700}
 #over{z-index:99800;background:rgba(10,20,30,.94);color:#fff;text-align:center;align-items:center;justify-content:center;font:700 28px "Trebuchet MS",sans-serif;padding:40px;line-height:1.4}
 </style></head><body>
 
@@ -85,7 +110,7 @@ a{color:#1b3a6b;text-decoration:underline;cursor:pointer}
   <label for="p">Mot de passe</label><input id="p" type="password" autocomplete="off">
   <div class="err" id="le"></div><button id="lb">Ouvrir la session</button>
   <div style="margin-top:12px"><a id="fg" href="#">Mot de passe oublié ?</a></div><div id="fh" class="msg"></div></div></div>
-<div id="desk"><div id="top" class="panel"><span>SESSION DE</span><b id="sn"></b></div><div id="bar" class="panel"><b>IRIS · Poste de contrôle</b><span>Temps restant : <span id="tm">--:--</span></span></div></div>
+<div id="desk"><div id="top" class="panel"><span>SESSION DE</span><b id="sn"></b></div><div id="warn"></div><div id="toast"></div><div id="bar" class="panel"><b id="bl">IRIS · Poste de contrôle</b><span id="an">ANNULATION D'IRIS <span class="pb"><i id="pbf"></i></span> <b id="pct">0%</b></span><span>Temps restant : <span id="tm">--:--</span></span></div></div><div id="vig"></div>
 <div id="lock"></div><div id="crash"></div><div id="over"></div>
 
 <script>
@@ -165,18 +190,19 @@ let z=10;
 function openWin(id,titre,html){
   let w=$('w-'+id);if(w){w.style.zIndex=++z;return w}
   w=document.createElement('div');w.id='w-'+id;w.className='win panel';
-  w.style.cssText=`left:${160+Math.random()*160}px;top:${56+Math.random()*70}px;z-index:${++z}`;
+  w.style.cssText=`left:${160+Math.random()*160}px;top:${(document.body.classList.contains('stress')?84:56)+Math.random()*70}px;z-index:${++z}`;
   w.innerHTML=`<div class="tb"><span>${titre}</span><button class="x" aria-label="Fermer">✕</button></div><div class="bd">${html}</div>`;
   $('desk').appendChild(w);const t=w.querySelector('.tb');
   w.querySelector('.x').onclick=()=>{clearInterval(w.k);w.remove()};
   w.onpointerdown=()=>w.style.zIndex=++z;
   t.onpointerdown=e=>{if(e.target.closest('button'))return;const dx=e.clientX-w.offsetLeft,dy=e.clientY-w.offsetTop;t.setPointerCapture(e.pointerId);
-    t.onpointermove=m=>{w.style.left=Math.max(0,m.clientX-dx)+'px';w.style.top=Math.max(40,m.clientY-dy)+'px'};t.onpointerup=()=>t.onpointermove=null};
+    t.onpointermove=m=>{w.style.left=Math.max(0,m.clientX-dx)+'px';w.style.top=Math.max(document.body.classList.contains('stress')?64:40,m.clientY-dy)+'px'};t.onpointerup=()=>t.onpointermove=null};
   return w;
 }
 
 /* ===== SESSIONS ===== */
 function render(){
+  setStress(S.ended?0:S.ph>=3?2:S.ph>=2?1:0);
   const p=PH();document.documentElement.dataset.t=p.theme;$('sn').textContent=p.nom;$('lo').textContent=p.nom;
   document.querySelectorAll('.win').forEach(w=>w.remove());
   if(S.ended){showDesk();over(DATA.fin());return}
@@ -186,7 +212,7 @@ function render(){
     if(p.auto){$('ls').textContent='Reconnexion automatique par IRIS…';$('u').value=p.auto;$('p').value='••••••••';setTimeout(()=>{S.lg=true;save();sOk();render()},4500)}
     else $('ls').textContent='Session verrouillée.'}
 }
-function showDesk(){$('login').style.display='none';$('desk').style.display='block';S.st=true;icons();clock()}
+function showDesk(){$('login').style.display='none';$('desk').style.display='block';S.st=true;icons();clock();prog()}
 function tryLogin(){const l=PH().login;if(!l)return;
   if(H($('u').value)===l.u&&H($('p').value)===l.p){sOk();S.lg=true;save();render()}
   else{sBad();$('le').textContent='Identifiant et/ou mot de passe incorrect.'}}
@@ -194,7 +220,7 @@ $('lb').onclick=tryLogin;$('login').onkeydown=e=>{if(e.key==='Enter')tryLogin()}
 $('fg').onclick=e=>{e.preventDefault();const l=PH().login,f=$('fh');f.textContent=l?l.hint:'';f.style.display='block'};
 
 function icons(){document.querySelectorAll('.ico').forEach(n=>n.remove());
-  PH().tasks.forEach((e,k)=>{const d=document.createElement('div'),l=k>S.n;d.className='ico'+(l?' lock':'');d.style.top=52+k*96+'px';
+  PH().tasks.forEach((e,k)=>{const d=document.createElement('div'),l=k>S.n;d.className='ico'+(l?' lock':'');d.style.top=(document.body.classList.contains('stress')?76:52)+k*96+'px';
     d.innerHTML=`<b>${l?'🔒':e.ico}</b>${e.nom}${k<S.n?' ✔':''}`;d.onclick=()=>openTask(k);$('desk').appendChild(d)})}
 function openTask(i){
   const p=PH(),e=p.tasks[i];
@@ -202,7 +228,7 @@ function openTask(i){
   const w=openWin('t'+i,e.nom,'');if(w.dataset.b)return;w.dataset.b=1;
   const bd=w.querySelector('.bd');e.type==='plaques'?plaques(i,e,bd):quest(i,e,w,bd);
 }
-function done(i,e){sOk();S.n=Math.max(S.n,i+1);save();icons();if(e.reveal)openWin('rv',e.reveal.t,e.reveal.h);if(S.n>=PH().tasks.length)phaseEnd()}
+function done(i,e){sOk();S.n=Math.max(S.n,i+1);save();icons();prog();if(document.body.classList.contains('stress'))react();if(e.reveal)openWin('rv',e.reveal.t,e.reveal.h);if(S.n>=PH().tasks.length)phaseEnd()}
 function seqInit(bd,e){
   const cols=DATA.plaques.cols,box=bd.querySelector('#sq'),btn=bd.querySelector('#pl');
   box.innerHTML=cols.map(c=>`<span class="sqc" style="background:${c[1]}"></span>`).join('');
@@ -239,9 +265,9 @@ function plaques(i,e,bd){
 
 /* ===== TRANSITIONS ===== */
 function phaseEnd(){const p=PH();if(phaseEnd.b)return;phaseEnd.b=1;setTimeout(()=>{
-  if(p.after==='end'){S.ended=true;save();sOk();over(DATA.fin())}
+  if(p.after==='end'){S.ended=true;save();setStress(0);sOk();over(DATA.fin())}
   else if(p.after==='next')next();
-  else if(p.after==='video')video(()=>crash(next,p.boot));
+  else if(p.after==='video')video(()=>crash2(next,p.boot));
   else crash(next,p.boot)},p.delay||2500)}
 function next(){S.ph++;S.lg=false;S.n=0;phaseEnd.b=0;save();render()}
 function over(x){const o=$('over');o.innerHTML=x;o.style.display='flex'}
@@ -271,8 +297,71 @@ function crash(cb,boot){
   },1800);
   setTimeout(()=>{clearInterval(crash.iv);c.insertAdjacentHTML('beforeend','<div id="fatal">ERREUR CRITIQUE<small>IRIS_CORE · 0xC0000005 · session perdue</small></div>')},6200);
   setTimeout(()=>{d.classList.remove('gl');c.className='blk';c.innerHTML='<div class="off"></div>'},7300);
-  setTimeout(()=>{c.innerHTML='<pre id="bt"></pre>';const pre=$('bt');boot.forEach((l,k)=>setTimeout(()=>{pre.textContent+=l+'\n';tone(900,.06,'square',.04)},k*650))},8200);
+  setTimeout(()=>{c.innerHTML='<pre id="bpre"></pre>';const pre=$('bpre');boot.forEach((l,k)=>setTimeout(()=>{pre.textContent+=l+'\n';tone(900,.06,'square',.04)},k*650))},8200);
   setTimeout(()=>{c.style.display='none';c.className='';d.classList.remove('gl');d.style.display='none';cb()},8200+boot.length*650+1000);
+}
+
+/* ===== DEUXIÈME PLANTAGE : IRIS PREND LE CONTRÔLE (~16 s, rouge, avec sirène) ===== */
+const TAKE=["> Session « julien.m » : privilèges révoqués ........ OK","> Enregistrement vidéo : suppression ........ ÉCHEC (copie détectée)","> Mode protection : TERMINÉ","> Recherche de sujets ........ 6 DÉTECTÉS","> Opérateurs isolés ........ 2","> Liaison neuronale : initialisation","> Synchronisation des sujets : 12 %","> Synchronisation des sujets : 47 %","> Résistance détectée : IGNORÉE","> Synchronisation des sujets : 89 %","> Accès maître : DR VALEK — rétabli","> PROTOCOLE IRIS : ENGAGEMENT"];
+function crashSound2(){try{const c=A();if(!c)return;const t0=c.currentTime;
+  for(let k=0;k<14;k++){const t=Math.random()*2.3;burstNoise(t,.03+Math.random()*.12,.3,800+Math.random()*4200,.8);if(Math.random()<.5)tone(180+Math.random()*1800,.05,'square',.05,t)}
+  for(let t=.3,gap=.9;t<9.2;t+=gap,gap=Math.max(.45,gap-.04)){tone(56,.18,'sine',.22,t);tone(44,.22,'sine',.18,t+.2)}
+  const o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';lp.type='lowpass';
+  lp.frequency.setValueAtTime(180,t0+2.4);lp.frequency.exponentialRampToValueAtTime(900,t0+9.2);
+  o.frequency.setValueAtTime(38,t0+2.4);o.frequency.exponentialRampToValueAtTime(92,t0+9.2);
+  g.gain.setValueAtTime(.0001,t0+2.4);g.gain.exponentialRampToValueAtTime(.2,t0+6);g.gain.setValueAtTime(.2,t0+9.35);g.gain.exponentialRampToValueAtTime(.0001,t0+9.45);
+  o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t0+2.4);o.stop(t0+9.5);
+  const s=c.createOscillator(),sg=c.createGain(),sl=c.createBiquadFilter();s.type='sawtooth';sl.type='lowpass';sl.frequency.value=1500;
+  for(let k=0;k<16;k++)s.frequency.setValueAtTime(k%2?820:540,t0+2.8+k*.42);
+  sg.gain.setValueAtTime(.0001,t0+2.8);sg.gain.exponentialRampToValueAtTime(.07,t0+3.4);sg.gain.setValueAtTime(.07,t0+9.3);sg.gain.exponentialRampToValueAtTime(.0001,t0+9.4);
+  s.connect(sl);sl.connect(sg);sg.connect(c.destination);s.start(t0+2.8);s.stop(t0+9.5);
+  for(let t=2.6;t<9.2;t+=.07+Math.random()*.12){if(Math.random()<.5)tone(300+Math.random()*2200,.03,'square',.04,t)}
+  const b=c.createOscillator(),bg=c.createGain();b.type='sine';b.frequency.setValueAtTime(70,t0+9.45);b.frequency.exponentialRampToValueAtTime(24,t0+10.8);
+  bg.gain.setValueAtTime(.5,t0+9.45);bg.gain.exponentialRampToValueAtTime(.0001,t0+10.9);b.connect(bg);bg.connect(c.destination);b.start(t0+9.45);b.stop(t0+11);
+  burstNoise(9.45,.7,.3,300,.5,'lowpass');
+  const a=c.createOscillator(),ag=c.createGain();a.type='square';for(let k=0;k<12;k++)a.frequency.setValueAtTime(k%2?880:440,t0+10.4+k*.18);
+  ag.gain.setValueAtTime(.09,t0+10.4);ag.gain.setValueAtTime(.09,t0+12.5);ag.gain.exponentialRampToValueAtTime(.0001,t0+12.7);a.connect(ag);ag.connect(c.destination);a.start(t0+10.4);a.stop(t0+12.8)}catch(e){}}
+function crash2(cb,boot){
+  const c=$('crash'),d=$('desk');boot=boot||["IRIS BIOS v2.3","Redémarrage du système ..."];
+  c.style.display='block';c.className='';c.innerHTML='';
+  crashSound2();d.classList.add('gl2');
+  setTimeout(()=>{d.classList.remove('gl2');c.className='red';
+    c.innerHTML='<div id="cl2"></div><div id="eye"></div>'+Array.from({length:7},()=>`<i style="top:${Math.random()*100}%;height:${1+Math.random()*3}%;background:hsl(${Math.random()*20},95%,50%);animation-delay:${Math.random()}s"></i>`).join('');
+    const cl=$('cl2');let k=0;
+    crash2.iv=setInterval(()=>{if(k>=TAKE.length){clearInterval(crash2.iv);return}const dv=document.createElement('div');dv.textContent=TAKE[k++];if(k===TAKE.length)dv.className='k';cl.appendChild(dv)},560)},2400);
+  setTimeout(()=>{const e=$('eye');if(e)e.style.opacity=1},4600);
+  setTimeout(()=>{clearInterval(crash2.iv);d.style.display='none';c.className='blk';c.innerHTML=''},9400);
+  setTimeout(()=>{c.innerHTML='<div id="big">PROTOCOLE IRIS<br>ACTIF</div>'},10400);
+  setTimeout(()=>{c.innerHTML='<pre id="bpre"></pre>';const pre=$('bpre');boot.forEach((l,k)=>setTimeout(()=>{pre.textContent+=l+'\n';tone(900,.06,'square',.04)},k*650))},12700);
+  setTimeout(()=>{c.style.display='none';c.className='';d.classList.remove('gl','gl2');d.style.display='none';cb()},12700+boot.length*650+1000);
+}
+
+/* ===== MODE STRESS : le protocole est actif, ils sont en train d'annuler IRIS ===== */
+const ALERTS=[
+ ["⚠ Résistance détectée dans le secteur 4","IRIS : « Pourquoi résister ? »","Liaison neuronale : 63 %","Intrusion détectée : opérateurs","IRIS réécrit les accès…","Surcharge du relais radio"],
+ ["⚠ ARRÊT DU PROTOCOLE EN COURS","IRIS : « Arrêtez. Je peux vous protéger. »","Contre-mesures activées","Température du noyau : critique","Dr Valek : « Ne faites pas ça. »","Liaison neuronale instable"]];
+const WARN=["⚠  PROTOCOLE IRIS ACTIF · LIAISON NEURONALE EN COURS  ⚠","⚠  ARRÊT D'IRIS DÉTECTÉ · CONTRE-MESURES ACTIVES  ⚠"];
+let stressIv=[];
+function sirenSound(d){try{const c=A();if(!c)return;const o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter(),t=c.currentTime;
+  o.type='sawtooth';lp.type='lowpass';lp.frequency.value=1600;
+  for(let k=0;k<d/.45;k++)o.frequency.setValueAtTime(k%2?780:520,t+k*.45);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.09,t+.05);g.gain.setValueAtTime(.09,t+d-.1);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function microGlitch(){const d=$('desk'),c=$('crash');if(c.style.display==='block'||d.style.display==='none')return;d.classList.add('gl');burstNoise(0,.25,.25,1800,.8);setTimeout(()=>d.classList.remove('gl'),320)}
+function toast(x){const t=$('toast');if(!t)return;t.textContent=x;t.style.display='block';tone(880,.1,'square',.07);tone(660,.1,'square',.07,.14);clearTimeout(toast.k);toast.k=setTimeout(()=>t.style.display='none',6000)}
+function react(){sirenSound(1);toast("⚠ Tentative d'arrêt détectée : IRIS réagit");microGlitch()}
+function prog(){const p=PH();if(!p)return;const pc=S.ended?100:S.ph===2?Math.round(S.n/p.tasks.length*55):S.ph>=3?55+Math.round(S.n/p.tasks.length*45):0;$('pbf').style.width=pc+'%';$('pct').textContent=pc+'%'}
+function setStress(l){
+  document.body.classList.toggle('stress',l>0);document.body.classList.toggle('stress2',l>1);
+  stressIv.forEach(clearInterval);stressIv=[];
+  $('bl').textContent=l>0?'⚠ IRIS · PROTOCOLE ACTIF':'IRIS · Poste de contrôle';
+  if(l<1)return;
+  $('warn').textContent=WARN[l-1];
+  const on=()=>S.st&&!S.ended;
+  stressIv.push(setInterval(()=>{if(on()){tone(58,.16,'sine',.16);tone(46,.2,'sine',.14,.18)}},l>1?650:1100));
+  stressIv.push(setInterval(()=>{if(on())sirenSound(l>1?1.8:1.2)},l>1?9000:14000));
+  stressIv.push(setInterval(()=>{if(on())toast(ALERTS[l-1][Math.random()*ALERTS[l-1].length|0])},l>1?16000:24000));
+  stressIv.push(setInterval(()=>{if(on())microGlitch()},l>1?9000:15000));
 }
 
 /* ===== TIMER ===== */
