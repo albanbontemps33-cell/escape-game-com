@@ -12,19 +12,35 @@ input{user-select:text;font:inherit}
 button{font:inherit;padding:6px 16px;background:#c9c9c4;border:0;cursor:pointer;box-shadow:inset -1px -1px #333,inset 1px 1px #fff,inset -2px -2px #888,inset 2px 2px #e6e6e2}
 button:active{box-shadow:inset 1px 1px #333,inset -1px -1px #fff}
 button:disabled{opacity:.5;cursor:not-allowed}
-button:focus-visible,input:focus-visible{outline:2px solid #1b3a6b;outline-offset:1px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #1b3a6b;outline-offset:1px}
 input{padding:6px;border:0;background:#fff;box-shadow:inset 1px 1px #555,inset -1px -1px #ddd;width:100%}
 input:disabled{background:#ddd}
 h1{margin:0 0 4px;font:700 30px "Trebuchet MS",sans-serif;letter-spacing:3px;color:var(--t1)}
 label{display:block;margin:10px 0 3px;font-weight:700}
+a{color:#1b3a6b;text-decoration:underline;cursor:pointer}
 .err{color:#9c1c14;margin-top:10px;min-height:38px}.okm{color:#1f6b2a}
 #splash,#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 #splash{background:#000;z-index:100000}
 #login{background:radial-gradient(circle at 30% 20%,var(--t2),#0a1520 70%);display:none}
-#splash .panel,#login .panel{width:380px;padding:24px}
+#splash .panel,#login .panel{width:390px;padding:24px}
+.own{font-size:12px;letter-spacing:3px;color:#555}
+#lo{font:700 24px "Trebuchet MS",sans-serif;color:var(--t1);text-transform:uppercase;margin:2px 0 12px}
+#fh{display:none;margin-top:10px}
 #desk{position:fixed;inset:0;background:var(--d);display:none;transition:background .6s}
-#desk.gl{animation:gl .7s linear infinite}
-@keyframes gl{0%{transform:translate(0);filter:hue-rotate(0)}25%{transform:translate(-14px,4px) skewX(3deg);filter:hue-rotate(90deg)}50%{transform:translate(12px,-6px);filter:hue-rotate(200deg) contrast(1.4)}75%{transform:translate(-6px,8px) skewX(-4deg);filter:hue-rotate(300deg)}100%{transform:translate(0);filter:hue-rotate(360deg)}}
+#desk.gl{animation:gl 1.2s steps(1) infinite}
+@keyframes gl{
+0%{transform:translate(0);filter:none}
+10%{transform:translate(-18px,3px) skewX(4deg);filter:drop-shadow(6px 0 #f00) drop-shadow(-6px 0 #0ff)}
+22%{transform:translate(0);filter:contrast(1.8)}
+34%{transform:translate(22px,-5px) scaleY(1.03);filter:hue-rotate(120deg) drop-shadow(-5px 0 #0f0)}
+48%{transform:translate(-8px,0);filter:none}
+62%{transform:translate(14px,6px) skewX(-5deg);filter:drop-shadow(5px 0 #f0f) saturate(3)}
+78%{transform:translate(0);filter:brightness(.6)}
+90%{transform:translate(-26px,-3px);filter:drop-shadow(-7px 0 #f00) drop-shadow(7px 0 #0ff)}
+100%{transform:translate(0)}}
+#top{position:absolute;left:0;right:0;top:0;height:38px;display:flex;align-items:center;gap:10px;padding:0 14px;z-index:9000;letter-spacing:1px}
+#top span{font-size:12px;letter-spacing:3px;color:#555}
+#top b{text-transform:uppercase;color:var(--t1);font-size:16px}
 .ico{position:absolute;left:24px;width:110px;text-align:center;color:#fff;cursor:pointer;text-shadow:1px 1px 2px #000;padding:4px}
 .ico b{display:block;font-size:36px;font-weight:400}.ico.lock{opacity:.55}
 #bar{position:absolute;left:0;right:0;bottom:0;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:9000}
@@ -38,66 +54,104 @@ label{display:block;margin:10px 0 3px;font-weight:700}
 .chip{display:inline-block;width:32px;height:32px;margin:2px;border:2px solid #fff;box-shadow:0 0 0 1px #333;cursor:pointer}.chip.sel{outline:3px solid #ffd400;outline-offset:2px}
 .fold{display:flex;gap:10px;margin-bottom:12px}
 .fd{flex:1;min-height:110px;text-align:center;padding:8px;background:#e9e4c4;box-shadow:inset 1px 1px #555;cursor:pointer}.sy{font-size:34px}
+.sqc{display:inline-block;width:46px;height:46px;margin:4px;opacity:.22;border:2px solid #fff;box-shadow:0 0 0 1px #333;transition:opacity .08s}
+.sqc.on{opacity:1;outline:3px solid #fff}
+.gr{display:grid;grid-template-columns:22px repeat(5,38px);gap:3px;justify-content:center;margin:6px 0 12px}
+.gr b{display:flex;align-items:center;justify-content:center;font-size:12px;color:#333;min-height:22px}
+.gr i{height:38px;background:#e9e9e4;box-shadow:inset 1px 1px #888}.gr i.on{background:#1b3a6b}
 #lock,#crash,#over{position:fixed;inset:0;display:none}
 #lock{z-index:99500;background:rgba(110,0,0,.94);color:#fff;align-items:center;justify-content:center;text-align:center;font:700 40px "Trebuchet MS",sans-serif}
 #lock small{display:block;margin-top:14px;font-size:20px;font-weight:400}
-#crash{z-index:99000;overflow:hidden;background:rgba(0,0,0,.25)}
-#crash i{position:absolute;left:0;width:100%;animation:fl .6s ease-in-out infinite}
+#crash{z-index:99000;overflow:hidden}
+#crash.on{background:rgba(0,0,0,.62);animation:fk 2.2s steps(1) infinite}
+#crash.on::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px);pointer-events:none}
+#crash.blk{background:#000}
+@keyframes fk{0%{opacity:1}30%{opacity:.88}34%{opacity:1}70%{opacity:.92}74%{opacity:1}}
+#cl{position:absolute;inset:0;padding:12px 18px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;font:13px/1.3 "Courier New",monospace;color:#8f8;text-shadow:0 0 5px #2f2;white-space:pre}
+#cl .r{color:#f66;text-shadow:0 0 5px #f22}
+#crash i{position:absolute;left:0;width:100%;mix-blend-mode:screen;opacity:.35;animation:fl .9s steps(4) infinite}
 @keyframes fl{0%,100%{transform:translateX(0)}25%{transform:translateX(-40px)}50%{transform:translateX(50px)}75%{transform:translateX(-15px)}}
-#crash b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#7ad;font:700 30px "Courier New",monospace}
+#fatal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:26px 40px;background:#400;border:3px solid #f55;color:#fff;font:700 30px "Courier New",monospace;text-align:center;box-shadow:0 0 40px #f00}
+#fatal small{display:block;margin-top:10px;font-size:16px;font-weight:400;color:#fbb}
+.off{position:absolute;left:0;right:0;top:50%;background:#cde;height:100%;transform:translateY(-50%);animation:off .7s ease-in forwards}
+@keyframes off{0%{height:100%;opacity:.85}55%{height:3px;opacity:1}85%{height:3px;left:45%;right:45%}100%{height:2px;left:50%;right:50%;opacity:0}}
+#bt{position:absolute;left:24px;top:24px;margin:0;font:16px/1.7 "Courier New",monospace;color:#ccc;white-space:pre}
 #over{z-index:99800;background:rgba(10,20,30,.94);color:#fff;text-align:center;align-items:center;justify-content:center;font:700 28px "Trebuchet MS",sans-serif;padding:40px;line-height:1.4}
 </style></head><body>
 
 <div id="splash"><div class="panel"><h1>IRIS</h1><p>Poste de contrôle. L'affichage doit passer en plein écran.</p><button id="go">Démarrer le poste</button></div></div>
-<div id="login"><div class="panel"><h1>IRIS</h1><p id="ls"></p>
+<div id="login"><div class="panel"><div class="own">SESSION DE</div><div id="lo"></div><p id="ls"></p>
   <label for="u">Identifiant</label><input id="u" autocomplete="off">
   <label for="p">Mot de passe</label><input id="p" type="password" autocomplete="off">
-  <div class="err" id="le"></div><button id="lb">Ouvrir la session</button></div></div>
-<div id="desk"><div id="bar" class="panel"><b id="sn"></b><span>Temps restant : <span id="tm">--:--</span></span></div></div>
+  <div class="err" id="le"></div><button id="lb">Ouvrir la session</button>
+  <div style="margin-top:12px"><a id="fg" href="#">Mot de passe oublié ?</a></div><div id="fh" class="msg"></div></div></div>
+<div id="desk"><div id="top" class="panel"><span>SESSION DE</span><b id="sn"></b></div><div id="bar" class="panel"><b>IRIS · Poste de contrôle</b><span>Temps restant : <span id="tm">--:--</span></span></div></div>
 <div id="lock"></div><div id="crash"></div><div id="over"></div>
 
 <script>
 /* ===== CONTENU À MODIFIER =====
-   Réponses en hash. Console (F12) : H("réponse") donne le hash, reset() remet tout à zéro.
-   Réponses d'exemple : dr.valek / IRIS-0731 · julien.m / carnet12 · CADB · 48KRT · SOLEIL · 7391 · ECLIPSE */
+   Réponses stockées en hash. Console (F12) : H("réponse") donne le hash, reset() remet tout à zéro.
+   Réponses actuelles :
+   @@ANS_COMMENT@@ */
+function grid(rows){let h='<div class="gr"><span></span>'+'ABCDE'.split('').map(c=>`<b>${c}</b>`).join('');
+  rows.forEach((r,i)=>{h+=`<b>${i+1}</b>`+r.split('').map(c=>`<i class="${c==='#'?'on':''}"></i>`).join('')});return h+'</div>'}
 const DATA={
  duree:50*60,
  /* plaques : couleur → dossier. sol[k] = numéro du dossier (0,1,2) de la plaque k, dans l'ordre de cols */
  plaques:{cols:[["bleue","#1e5bd8"],["rouge","#d12a2a"],["jaune","#e8c21a"],["violette","#7a35b8"],["verte","#2a9d4a"],["noire","#161616"]],folders:["🐕","🌲","⭐"],sol:[0,1,2,1,0,2]},
- video:{src:"julien.mp4",texte:"« Si vous voyez ceci, vous êtes pris au piège. IRIS n'a jamais été abandonné. Le mode protection isole les intrus pour en faire des cobayes. Valek veut devenir le maître : contrôler les esprits par la pensée. Je ne peux pas vous aider directement, mais j'ai tout noté. La clé est cachée : [À COMPLÉTER]. Parlez-vous : IRIS se nourrit de l'isolement. »"},
- fin:"Protocole IRIS interrompu. IRIS s'éteint. Les verrous manuels restent actifs : l'équipe du labo doit trouver la clé pour libérer les opérateurs.",
+ video:{src:"julien.mp4",texte:"« Si vous voyez ceci, vous êtes pris au piège. IRIS n'a jamais été abandonné. Le mode protection isole les intrus pour en faire des cobayes. Valek veut devenir le maître : contrôler les esprits par la pensée. Je ne peux pas vous aider directement, mais j'ai tout noté. Arrêtez IRIS, et je vous dirai comment sortir. Parlez-vous : IRIS se nourrit de l'isolement. »"},
+ cle:"[INDICE DE LA CLÉ À COMPLÉTER]",
+ fin(){return `<div><div style="font-size:34px;letter-spacing:3px;margin-bottom:18px">PROTOCOLE IRIS INTERROMPU</div><div style="font-weight:400;font-size:20px;opacity:.85;margin-bottom:26px">IRIS s'éteint. Les liaisons neuronales sont coupées.</div><div style="font-weight:400;font-size:22px;max-width:900px;margin:0 auto">Message de Julien :<br>« Vous avez réussi. Mais les verrous manuels ne dépendent pas d'IRIS. Pour libérer les opérateurs, il faut la clé : <b>${this.cle}</b>. »</div></div>`},
  phases:[
-  {nom:"Dr Valek",theme:"valek",login:{u:"1d8lqti",p:"l0o02p",hint:"Identifiant et mot de passe : voir le badge du Dr Valek."},
+  {nom:"Dr Valek",theme:"valek",login:{u:@@H:dr.valek@@,p:@@H:IRIS-0731@@,hint:"L'identifiant et le mot de passe se trouvent sur le badge d'accès du docteur Valek."},
+   boot:["IRIS BIOS v2.3 — Laboratoire Valek","Vérification mémoire .......... OK","Session « dr.valek » .......... INTROUVABLE","Chargement d'une session de secours ..."],
    tasks:[{ico:"🗂️",nom:"Dossier n°1",type:"plaques",txt:"Dossier protégé. Rangez chaque plaque dans le dossier qui porte son symbole. Une erreur bloque l'accès 30 secondes.",
      reveal:{t:"Lettre du Dr Valek",h:"<p><i>Objet : projet IRIS</i></p><p>Le projet IRIS est officiellement abandonné faute de financement. Le protocole s'éteindra de lui-même. Aucune intervention n'est nécessaire.</p><p>Dr Valek</p>"}}],
    after:"crash",delay:14000},
-  {nom:"Julien",theme:"julien",login:{u:"4ctlw9",p:"1uf7b1l",hint:"Le carnet de Julien contient ses identifiants."},
+  {nom:"Julien",theme:"julien",login:{u:@@H:julien.m@@,p:@@H:carnet12@@,hint:"L'identifiant et le mot de passe de Julien sont notés dans son carnet."},
+   boot:["IRIS BIOS v2.3 — Laboratoire Valek","Mode protection .......... SUSPENDU","PROTOCOLE IRIS .......... EN MARCHE","Liaison neuronale .......... ÉTABLIE"],
    tasks:[
     {ico:"📩",nom:"Messages de Julien",txt:"Quatre messages sans date. L'équipe dehors a le calendrier du labo : donnez l'ordre chronologique.",
-     extra:'<div class="msg"><b>A</b> « Valek a coupé le budget. »</div><div class="msg"><b>B</b> « Les premiers cobayes arrivent. »</div><div class="msg"><b>C</b> « IRIS est enfin prêt. »</div><div class="msg"><b>D</b> « Je garde des copies de tout. »</div>',ph:"4 lettres, ex. ABCD",h:"yj0129"},
-    {ico:"🔒",nom:"Dossier privé",txt:"Le code a deux parties : le nombre affiché ici est <b>48</b>, la suite (3 lettres) est écrite dans le labo.",ph:"Code complet",h:"1swttw"}],
+     extra:'<div class="msg"><b>A</b> « Valek a coupé le budget. »</div><div class="msg"><b>B</b> « Les premiers cobayes arrivent. »</div><div class="msg"><b>C</b> « IRIS est enfin prêt. »</div><div class="msg"><b>D</b> « Je garde des copies de tout. »</div>',ph:"4 lettres, ex. ABCD",h:@@H:CADB@@},
+    {ico:"🔒",nom:"Dossier privé",seq:["rouge","noire","bleue","verte","jaune"],txt:"Julien a verrouillé ce dossier avec une séquence lumineuse. Lancez-la, notez l'ordre des couleurs et donnez-le à l'équipe dehors : la table « code couleur de Julien » est dans le labo. Le code fait 5 chiffres.",ph:"Code (5 chiffres)",h:@@H:23769@@}],
    after:"video",delay:2500},
   {nom:"IRIS (protocole actif)",theme:"iris",nologin:true,
    tasks:[
-    {ico:"📡",nom:"Relais radio",txt:"La radio est brouillée. IRIS a chiffré le message de sortie. L'équipe dehors a le disque de chiffrement : demandez-leur le décalage.",extra:'<div class="msg" style="font:700 24px Courier New">VROHLO</div>',ph:"Mot déchiffré",h:"zw9bv9"},
-    {ico:"🎚️",nom:"Synchronisation",arm:20,txt:"Les deux leviers du labo doivent être tirés pendant que vous armez la synchro. Le code s'affiche sous les leviers.",ph:"Code (4 chiffres)",h:"yhu4g9"}],
+    {ico:"📡",nom:"Relais radio",txt:"La radio est brouillée. IRIS a chiffré le mot de passe de sortie : chaque caractère est décalé. L'équipe dehors a le disque de chiffrement.",extra:'<div class="msg" style="font:700 26px Courier New;letter-spacing:4px;text-align:center">@@ENC@@</div>',ph:"Mot de passe déchiffré (6 caractères)",h:@@HRELAY@@},
+    {ico:"🧬",nom:"Empreinte IRIS",txt:"IRIS demande une reconnaissance de motif. Décrivez le motif ci-dessous à l'équipe dehors (colonne + ligne, par exemple « B3 »). Ils ont les cartes d'empreintes : une seule correspond exactement. Entrez le code inscrit sur cette carte.",extra:grid(@@ROWS@@),ph:"Code (4 chiffres)",h:@@HEMP@@}],
    after:"next",delay:3000},
   {nom:"Dr Valek (administrateur)",theme:"valek",auto:"dr.valek",
-   tasks:[{ico:"⛔",nom:"Désactiver IRIS",arm:20,txt:"Administrateur : arrêt du protocole. Entrez le code d'arrêt, inscrit dans le labo. Il faut l'avoir <b>avant</b> d'armer.",ph:"Code d'arrêt",h:"1rtr540"}],
+   tasks:[{ico:"⛔",nom:"Désactiver IRIS",arm:20,txt:"Administrateur : arrêt du protocole. Le code d'arrêt a 4 chiffres, un par ligne. La valeur de chaque symbole se trouve dans la Table IRIS, dans le labo. Armez le verrou seulement quand le code est prêt.",
+     extra:'<div class="msg" style="font:700 22px Courier New;line-height:1.7">1) ⭐ + 🐕<br>2) 🌲 − ⭐<br>3) 🐕 × 🌙<br>4) 🌲 − 🌙</div>',ph:"Code d'arrêt (4 chiffres)",h:@@H:8366@@}],
    after:"end",delay:1500}
  ]};
 
 /* ===== OUTILS ===== */
 const $=id=>document.getElementById(id);
-const H=s=>{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');let h=5381;for(const c of s)h=((h*33)^c.charCodeAt(0))>>>0;return h.toString(36)};
+const H=s=>{s=s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');let h=5381;for(const c of s)h=((h*33)^c.charCodeAt(0))>>>0;return h.toString(36)};
 let S={ph:0,lg:false,n:0,t:DATA.duree,st:false,ended:false};
 try{S=Object.assign(S,JSON.parse(localStorage.getItem('iris')||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem('iris',JSON.stringify(S))}catch(e){}};
 const PH=()=>DATA.phases[S.ph];
 let ac;
-function tone(f,d=.15,ty='square',v=.06,at=0){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+at;o.type=ty;o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
+function A(){try{ac=ac||new AudioContext();if(ac.state==='suspended')ac.resume();return ac}catch(e){return null}}
+function tone(f,d=.15,ty='square',v=.06,at=0){try{const c=A();if(!c)return;const o=c.createOscillator(),g=c.createGain(),s=c.currentTime+at;o.type=ty;o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
 const sOk=()=>{tone(660,.12,'sine',.1);tone(880,.22,'sine',.1,.12)},sBad=()=>tone(160,.4,'sawtooth',.07);
-function noise(d){try{ac=ac||new AudioContext();const n=ac.sampleRate*d,b=ac.createBuffer(1,n,ac.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);const s=ac.createBufferSource(),g=ac.createGain();g.gain.value=.22;s.buffer=b;s.connect(g);g.connect(ac.destination);s.start()}catch(e){}}
+function burstNoise(at,d,v,f,q,type){try{const c=A();if(!c)return;const n=Math.max(1,Math.floor(c.sampleRate*d)),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);
+  for(let i=0;i<n;i++)a[i]=Math.random()*2-1;
+  const s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain(),t=c.currentTime+at;
+  s.buffer=b;fl.type=type||'bandpass';fl.frequency.value=f;fl.Q.value=q||1;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  s.connect(fl);fl.connect(g);g.connect(c.destination);s.start(t)}catch(e){}}
+function crashSound(){try{const c=A();if(!c)return;const t0=c.currentTime;
+  for(let k=0;k<9;k++){const t=Math.random()*1.8;burstNoise(t,.03+Math.random()*.1,.28,1500+Math.random()*3500,.8);tone(40+Math.random()*60,.12,'sine',.18,t)}
+  const o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';lp.type='lowpass';lp.frequency.value=700;
+  o.frequency.setValueAtTime(55,t0+1.8);o.frequency.exponentialRampToValueAtTime(240,t0+7.2);
+  g.gain.setValueAtTime(.0001,t0+1.8);g.gain.exponentialRampToValueAtTime(.16,t0+6);g.gain.setValueAtTime(.16,t0+7.2);g.gain.exponentialRampToValueAtTime(.0001,t0+7.3);
+  o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t0+1.8);o.stop(t0+7.4);
+  for(let t=1.8;t<7.2;t+=.06+Math.random()*.1){if(Math.random()<.6)tone(200+Math.random()*2600,.03+Math.random()*.05,Math.random()<.5?'square':'sawtooth',.05,t);if(Math.random()<.45)burstNoise(t,.02+Math.random()*.08,.22,500+Math.random()*4000,.6)}
+  const o2=c.createOscillator(),g2=c.createGain();o2.type='sine';o2.frequency.setValueAtTime(520,t0+7.3);o2.frequency.exponentialRampToValueAtTime(24,t0+8);
+  g2.gain.setValueAtTime(.3,t0+7.3);g2.gain.exponentialRampToValueAtTime(.0001,t0+8.1);o2.connect(g2);g2.connect(c.destination);o2.start(t0+7.3);o2.stop(t0+8.2);
+  burstNoise(7.3,.5,.3,400,.5,'lowpass')}catch(e){}}
 document.addEventListener('contextmenu',e=>e.preventDefault());
 window.reset=()=>{localStorage.removeItem('iris');location.reload()};
 
@@ -111,34 +165,36 @@ let z=10;
 function openWin(id,titre,html){
   let w=$('w-'+id);if(w){w.style.zIndex=++z;return w}
   w=document.createElement('div');w.id='w-'+id;w.className='win panel';
-  w.style.cssText=`left:${160+Math.random()*160}px;top:${30+Math.random()*80}px;z-index:${++z}`;
+  w.style.cssText=`left:${160+Math.random()*160}px;top:${56+Math.random()*70}px;z-index:${++z}`;
   w.innerHTML=`<div class="tb"><span>${titre}</span><button class="x" aria-label="Fermer">✕</button></div><div class="bd">${html}</div>`;
   $('desk').appendChild(w);const t=w.querySelector('.tb');
   w.querySelector('.x').onclick=()=>{clearInterval(w.k);w.remove()};
   w.onpointerdown=()=>w.style.zIndex=++z;
   t.onpointerdown=e=>{if(e.target.closest('button'))return;const dx=e.clientX-w.offsetLeft,dy=e.clientY-w.offsetTop;t.setPointerCapture(e.pointerId);
-    t.onpointermove=m=>{w.style.left=Math.max(0,m.clientX-dx)+'px';w.style.top=Math.max(0,m.clientY-dy)+'px'};t.onpointerup=()=>t.onpointermove=null};
+    t.onpointermove=m=>{w.style.left=Math.max(0,m.clientX-dx)+'px';w.style.top=Math.max(40,m.clientY-dy)+'px'};t.onpointerup=()=>t.onpointermove=null};
   return w;
 }
 
 /* ===== SESSIONS ===== */
 function render(){
-  const p=PH();document.documentElement.dataset.t=p.theme;$('sn').textContent='Session : '+p.nom;
+  const p=PH();document.documentElement.dataset.t=p.theme;$('sn').textContent=p.nom;$('lo').textContent=p.nom;
   document.querySelectorAll('.win').forEach(w=>w.remove());
-  if(S.ended){showDesk();over(DATA.fin);return}
+  if(S.ended){showDesk();over(DATA.fin());return}
   if(p.nologin||S.lg){S.lg=true;showDesk();if(S.n>=p.tasks.length)phaseEnd()}
-  else{$('desk').style.display='none';$('login').style.display='flex';$('u').value='';$('p').value='';$('le').textContent='';
+  else{$('desk').style.display='none';$('login').style.display='flex';$('u').value='';$('p').value='';$('le').textContent='';$('fh').style.display='none';
+    $('fg').parentNode.style.display=p.auto?'none':'';$('lb').style.display=p.auto?'none':'';
     if(p.auto){$('ls').textContent='Reconnexion automatique par IRIS…';$('u').value=p.auto;$('p').value='••••••••';setTimeout(()=>{S.lg=true;save();sOk();render()},4500)}
     else $('ls').textContent='Session verrouillée.'}
 }
 function showDesk(){$('login').style.display='none';$('desk').style.display='block';S.st=true;icons();clock()}
 function tryLogin(){const l=PH().login;if(!l)return;
   if(H($('u').value)===l.u&&H($('p').value)===l.p){sOk();S.lg=true;save();render()}
-  else{sBad();$('le').textContent='Identifiants incorrects. '+l.hint}}
+  else{sBad();$('le').textContent='Identifiant et/ou mot de passe incorrect.'}}
 $('lb').onclick=tryLogin;$('login').onkeydown=e=>{if(e.key==='Enter')tryLogin()};
+$('fg').onclick=e=>{e.preventDefault();const l=PH().login,f=$('fh');f.textContent=l?l.hint:'';f.style.display='block'};
 
 function icons(){document.querySelectorAll('.ico').forEach(n=>n.remove());
-  PH().tasks.forEach((e,k)=>{const d=document.createElement('div'),l=k>S.n;d.className='ico'+(l?' lock':'');d.style.top=18+k*96+'px';
+  PH().tasks.forEach((e,k)=>{const d=document.createElement('div'),l=k>S.n;d.className='ico'+(l?' lock':'');d.style.top=52+k*96+'px';
     d.innerHTML=`<b>${l?'🔒':e.ico}</b>${e.nom}${k<S.n?' ✔':''}`;d.onclick=()=>openTask(k);$('desk').appendChild(d)})}
 function openTask(i){
   const p=PH(),e=p.tasks[i];
@@ -147,8 +203,18 @@ function openTask(i){
   const bd=w.querySelector('.bd');e.type==='plaques'?plaques(i,e,bd):quest(i,e,w,bd);
 }
 function done(i,e){sOk();S.n=Math.max(S.n,i+1);save();icons();if(e.reveal)openWin('rv',e.reveal.t,e.reveal.h);if(S.n>=PH().tasks.length)phaseEnd()}
+function seqInit(bd,e){
+  const cols=DATA.plaques.cols,box=bd.querySelector('#sq'),btn=bd.querySelector('#pl');
+  box.innerHTML=cols.map(c=>`<span class="sqc" style="background:${c[1]}"></span>`).join('');
+  const cells=box.children;
+  btn.onclick=()=>{btn.disabled=true;
+    e.seq.forEach((nm,k)=>{const idx=cols.findIndex(c=>c[0]===nm);
+      setTimeout(()=>{cells[idx].classList.add('on');tone(300+idx*110,.5,'sine',.1)},500+k*1000);
+      setTimeout(()=>cells[idx].classList.remove('on'),500+k*1000+700)});
+    setTimeout(()=>{btn.disabled=false},500+e.seq.length*1000+200)}}
 function quest(i,e,w,bd){
-  bd.innerHTML=`<p>${e.txt}</p>${e.extra||''}${e.arm?`<div class="row" style="margin-bottom:8px"><button id="ar">Armer (${e.arm} s)</button></div>`:''}<div class="row"><input id="in" placeholder="${e.ph}" autocomplete="off"${e.arm?' disabled':''}><button id="bt">Valider</button></div><div class="err" id="fb"></div>`;
+  bd.innerHTML=`<p>${e.txt}</p>${e.extra||''}${e.seq?'<div id="sq" style="text-align:center;margin:6px 0"></div><div class="row" style="margin-bottom:8px"><button id="pl">▶ Lancer la séquence</button></div>':''}${e.arm?`<div class="row" style="margin-bottom:8px"><button id="ar">Armer (${e.arm} s)</button></div>`:''}<div class="row"><input id="in" placeholder="${e.ph}" autocomplete="off"${e.arm?' disabled':''}><button id="bt">Valider</button></div><div class="err" id="fb"></div>`;
+  if(e.seq)seqInit(bd,e);
   const f=bd.querySelector('#fb'),inp=bd.querySelector('#in');
   const go=()=>{
     if(inp.disabled){sBad();f.className='err';f.textContent="Non armé. Armez d'abord, puis saisissez le code avant la fin du compte à rebours.";return}
@@ -173,24 +239,41 @@ function plaques(i,e,bd){
 
 /* ===== TRANSITIONS ===== */
 function phaseEnd(){const p=PH();if(phaseEnd.b)return;phaseEnd.b=1;setTimeout(()=>{
-  if(p.after==='end'){S.ended=true;save();sOk();over(DATA.fin)}
+  if(p.after==='end'){S.ended=true;save();sOk();over(DATA.fin())}
   else if(p.after==='next')next();
-  else if(p.after==='video')video(()=>crash(next));
-  else crash(next)},p.delay||2500)}
+  else if(p.after==='video')video(()=>crash(next,p.boot));
+  else crash(next,p.boot)},p.delay||2500)}
 function next(){S.ph++;S.lg=false;S.n=0;phaseEnd.b=0;save();render()}
-function over(x){const o=$('over');o.textContent=x;o.style.display='flex'}
+function over(x){const o=$('over');o.innerHTML=x;o.style.display='flex'}
 function video(cb){
   const w=openWin('vid','Julien : enregistrement privé',`<video id="vd" src="${DATA.video.src}" controls autoplay style="width:100%;background:#000"></video><div id="tr" class="msg" style="display:none">${DATA.video.texte}</div><div class="row" style="margin-top:8px"><button id="vc" style="display:none">Fermer l'enregistrement</button></div>`);
   w.style.width='540px';const v=w.querySelector('#vd'),b=w.querySelector('#vc');
   v.onended=()=>b.style.display='';
   v.onerror=()=>{v.style.display='none';w.querySelector('#tr').style.display='block';setTimeout(()=>b.style.display='',10000)};
   b.onclick=()=>{w.remove();cb()}}
-function crash(cb){
-  const c=$('crash'),d=$('desk');c.style.display='block';c.style.background='rgba(0,0,0,.25)';
-  c.innerHTML=Array.from({length:16},()=>`<i style="top:${Math.random()*100}%;height:${2+Math.random()*9}%;background:hsl(${Math.random()*360},90%,55%);opacity:.5;animation-delay:${Math.random()}s"></i>`).join('');
-  d.classList.add('gl');noise(5);
-  setTimeout(()=>{c.style.background='#000';c.innerHTML='<b>REDÉMARRAGE…</b>';d.classList.remove('gl');d.style.display='none'},5500);
-  setTimeout(()=>{c.style.display='none';cb()},8500)}
+
+/* ===== PLANTAGE RÉALISTE ===== */
+const SNIP=["mov eax,[rbp-0x14]","call IRIS_CORE::sync","jmp 0x7FF6A3C1E4B0","xor rax,rax","ACCESS_VIOLATION (0xC0000005)","PROTECT_MODE: ENGAGED","neural_link == NULL","stack overflow  thread 0x3F2","mem[0x00007FF6] = 0xDEADBEEF","if(subject.locked){ iris.takeover(); }","for(i=0;i<N;i++) sujet[i].sync(maitre);","segfault (core dumped)","checksum mismatch 0x4F2A","session_token = NULL","SESSION OVERRIDE: unauthorized","page fault @ 0xFFFFF80002A4C1D8","push rbp ; mov rbp,rsp","ret ; return address corrupted","iris_neuro.c:2214 assert(state != LOCKED)","BUFFER OVERRUN detected"];
+const hx=n=>Array.from({length:n},()=>'0123456789ABCDEF'[Math.random()*16|0]).join('');
+const cline=()=>Math.random()<.2?'0x'+hx(8)+'  '+hx(8)+' '+hx(8)+' '+hx(8)+' '+hx(8):'0x'+hx(12)+'  '+SNIP[Math.random()*SNIP.length|0];
+function crash(cb,boot){
+  const c=$('crash'),d=$('desk');boot=boot||["IRIS BIOS v2.3","Redémarrage du système ..."];
+  c.style.display='block';c.className='';c.innerHTML='<div id="cl"></div>';
+  crashSound();
+  const gl=(ms,len)=>setTimeout(()=>{d.classList.add('gl');setTimeout(()=>d.classList.remove('gl'),len)},ms);
+  gl(350,260);gl(950,320);gl(1450,420);
+  setTimeout(()=>{
+    d.classList.add('gl');c.className='on';
+    c.insertAdjacentHTML('beforeend',Array.from({length:9},()=>`<i style="top:${Math.random()*100}%;height:${1.5+Math.random()*4}%;background:hsl(${Math.random()*360},90%,55%);animation-delay:${Math.random()}s"></i>`).join(''));
+    const cl=$('cl');let n=0;
+    const push=()=>{const t=cline(),dv=document.createElement('div');if(/VIOLATION|fault|segfault|OVERRUN|assert|NULL|corrupted|unauthorized/i.test(t))dv.className='r';dv.textContent=t;cl.appendChild(dv);while(cl.children.length>70)cl.removeChild(cl.firstChild)};
+    crash.iv=setInterval(()=>{for(let k=0;k<(++n>60?3:1);k++)push()},40);
+  },1800);
+  setTimeout(()=>{clearInterval(crash.iv);c.insertAdjacentHTML('beforeend','<div id="fatal">ERREUR CRITIQUE<small>IRIS_CORE · 0xC0000005 · session perdue</small></div>')},6200);
+  setTimeout(()=>{d.classList.remove('gl');c.className='blk';c.innerHTML='<div class="off"></div>'},7300);
+  setTimeout(()=>{c.innerHTML='<pre id="bt"></pre>';const pre=$('bt');boot.forEach((l,k)=>setTimeout(()=>{pre.textContent+=l+'\n';tone(900,.06,'square',.04)},k*650))},8200);
+  setTimeout(()=>{c.style.display='none';c.className='';d.classList.remove('gl');d.style.display='none';cb()},8200+boot.length*650+1000);
+}
 
 /* ===== TIMER ===== */
 function clock(){const t=Math.max(0,S.t),el=$('tm');el.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');el.className=t<300?'low':''}
